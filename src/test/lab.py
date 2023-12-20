@@ -1,4 +1,6 @@
 import copy
+import os
+
 import numpy as np
 import or_gym
 
@@ -12,6 +14,14 @@ def get_normalisation_data(env_size):
     variance = data[items[1]][0]
     std = np.array([x ** 0.5 for x in variance])
     return mean[-env_size:], std[-env_size:]
+
+
+def save_explainability_data(observations, actions, env_config, rewards, dir, name):
+    if not os.path.exists(dir):
+        os.makedirs(dir)
+
+    file = dir + "/" + name + ".npz"
+    np.savez(file, obs=observations, actions=actions, rewards=rewards, config=env_config)
 
 
 class Lab:
@@ -58,13 +68,15 @@ class Lab:
             env_data.append(input_array)
         return env_data
 
-    def evaluate_metalearner(self, model, num_episodes, env_data=None):
+    def evaluate_metalearner(self, model, num_episodes, env_data=None, logging=False):
         if env_data is None:
             env_data = self._env_data
         else:
             env_data = self.tidy_env_data(env_data)
 
         env = or_gym.make(env_name, env_config=self._env_config, verbose=0)
+        observations = []
+        actions = []
         rewards = []
         for i in range(num_episodes):
             obs = env.reset()
@@ -76,12 +88,15 @@ class Lab:
                 action = self.get_action(nn_output)
                 obs, r, done, _ = env.step(action)
                 reward += r
+                if logging:
+                    observations.append(obs)
+                    actions.append(action)
             rewards.append(reward)
 
         if num_episodes == 1:
             return rewards[0]
 
-        return rewards
+        return rewards, np.array(observations), np.array(actions)
 
     def read_environment(self, file_path):
         data = np.load(file_path, allow_pickle=True)
@@ -114,3 +129,6 @@ class Lab:
 
     def true_env_to_vector(self):
         return np.concatenate(self._env_data)
+
+    def env_config(self):
+        return self._env_config

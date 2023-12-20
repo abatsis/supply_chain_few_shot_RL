@@ -2,6 +2,7 @@ import secrets
 import sys
 from pathlib import Path
 from lab import get_normalisation_data
+from lab import save_explainability_data
 import numpy as np
 from lab import Lab
 from tensorflow import keras
@@ -54,9 +55,12 @@ for i in range(number_of_generations):
 
 env_data = np.mean(environments, axis=0)
 
-rewards = lab.evaluate_metalearner(meta_learner, number_of_offline_episodes, env_data=scale(env_data, means, stds))
+rewards, observations, actions = lab.evaluate_metalearner(meta_learner, number_of_offline_episodes,
+                                                          env_data=scale(env_data, means, stds), logging=True)
 destination_path = sys.argv[3]
 file_name = Path(file_path).stem
 file = destination_path + "/" + file_name + ".npz"
 np.savez(file, online_rewards=online_rewards, generations=generations, environments=environments, rewards=rewards,
          ppo_mean_reward=lab.get_mean_ppo_reward(), true_env=lab.true_env_to_vector())
+
+save_explainability_data(observations, actions, lab.env_config(), rewards, 'data/explainability_hidden', file_name)
