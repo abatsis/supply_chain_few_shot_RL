@@ -10,6 +10,13 @@ import pandas as pd
 from tqdm import tqdm
 
 
+def match_input_output(input_array, output, number_of_rows):
+    input_array = input_array[0:-1, :]
+    output = output[1:, :]
+    number_of_rows = number_of_rows - 1
+    return input_array, output, number_of_rows
+
+
 def convert_input_to_array(input):
     if isinstance(input, int):
         input = np.array([input])
@@ -74,14 +81,17 @@ class NNDatabase:
         number_of_rows = input_array.shape[0]
         input_size = self._input_sizes[0]
         input_array = np.pad(input_array, pad_width=((0, 0), (0, input_size - number_of_columns)), mode='constant',
-                           constant_values=0)
-        inputs.append(input_array)
+                             constant_values=0)
 
         item = files[1]
         output = data[item]
         number_of_columns = output.shape[1]
         output = np.pad(output, pad_width=((0, 0), (0, self._output_size - number_of_columns)), mode='constant',
                         constant_values=0)
+
+        input_array, output, number_of_rows = match_input_output(input_array, output, number_of_rows)
+
+        inputs.append(input_array)
 
         item = files[-1]
         environment = data[item].item()
@@ -106,4 +116,3 @@ class NNDatabase:
 
     def get_output_size(self):
         return self._output_size
-
