@@ -14,7 +14,8 @@ from meta_learner import MetaLearner
 
 input_sizes = [170, 11, 11, 1, 1, 11, 1, 2, 11, 11, 1, 1, 11, 1]
 output_size = 11
-lab = Lab(input_sizes, output_size)
+max_number_of_levels = 9
+lab = Lab(input_sizes, output_size, max_number_of_levels)
 
 
 def evaluate_rl_on_file(file_path):

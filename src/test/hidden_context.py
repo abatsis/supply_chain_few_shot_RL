@@ -13,7 +13,8 @@ from meta_learner import MetaLearner
 
 input_sizes = [170, 11, 11, 1, 1, 11, 1, 2, 11, 11, 1, 1, 11, 1]
 output_size = 11
-lab = Lab(input_sizes, output_size)
+max_number_of_levels = 9
+lab = Lab(input_sizes, output_size, max_number_of_levels)
 number_of_generations = 60
 number_of_offline_episodes = 20
 model = keras.models.load_model(sys.argv[1])

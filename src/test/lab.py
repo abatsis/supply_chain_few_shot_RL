@@ -25,7 +25,7 @@ def save_explainability_data(observations, actions, env_config, rewards, dir, na
 
 
 class Lab:
-    def __init__(self, input_sizes, output_size):
+    def __init__(self, input_sizes, output_size, max_number_of_levels):
         self._number_of_units = None
         self._env_data = None
         self._env_config = None
@@ -33,6 +33,7 @@ class Lab:
         self._output_size = output_size
         self._env_data_size = None
         self._ppo_mean_reward = None
+        self._max_number_of_levels = max_number_of_levels
 
     def convert_input_to_array(self, input):
         if isinstance(input, int):
@@ -45,9 +46,24 @@ class Lab:
             input = np.array([input])
         return input
 
+    def get_state_features(self, input_array):
+        bin_size = self._max_number_of_levels - 1
+        max_lead_time = max(self._env_config['L'])
+        number_of_levels = len(self._env_config['r'])
+        required_length = bin_size * (max_lead_time + 1)
+        result = np.zeros(max(required_length, self._input_sizes[0]))
+
+        for i, elem in enumerate(input_array):
+            bin_number, index = divmod(i, number_of_levels - 1)
+            if bin_number == 0:
+                result[index] = elem
+            else:
+                bin_number = max_lead_time - bin_number + 1
+                result[bin_size * bin_number + index] = elem
+        return result
+
     def get_data_point(self, obs, env_data):
-        obs = np.pad(obs, pad_width=(0, self._input_sizes[0] - len(obs)), mode='constant',
-                     constant_values=0)
+        obs = self.get_state_features(obs)
         data_point = [obs]
         data_point.extend(env_data)
         data_point = [array.reshape(1, len(array)) for array in data_point]

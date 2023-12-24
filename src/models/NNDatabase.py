@@ -17,6 +17,14 @@ def match_input_output(input_array, output, number_of_rows):
     return input_array, output, number_of_rows
 
 
+def get_number_of_levels(env_config):
+    return len(env_config['r'])
+
+
+def get_max_lead_time(env_config):
+    return max(env_config['L'])
+
+
 def convert_input_to_array(input):
     if isinstance(input, int):
         input = np.array([input])
@@ -31,13 +39,28 @@ def convert_input_to_array(input):
 
 class NNDatabase:
 
-    def __init__(self, _input_sizes, _output_size):
+    def __init__(self, _input_sizes, _output_size, max_number_of_levels):
         self._output_size = _output_size
         self._output = np.empty([0, _output_size])
         self._input_sizes = _input_sizes
         self._inputs = []
+        self._max_number_of_levels = max_number_of_levels
         for size in _input_sizes:
             self._inputs.append(np.empty([0, size]))
+
+    def get_state_features(self, input_array, max_number_of_levels, number_of_levels, max_lead_time):
+        bin_size = max_number_of_levels - 1
+        required_length = bin_size * (max_lead_time + 1)
+        result = np.zeros(max(required_length, self._input_sizes[0]))
+
+        for i, elem in enumerate(input_array):
+            bin_number, index = divmod(i, number_of_levels - 1)
+            if bin_number == 0:
+                result[index] = elem
+            else:
+                bin_number = max_lead_time - bin_number + 1
+                result[bin_size * bin_number + index] = elem
+        return result
 
     def read_data(self, files):
         # check if directory was given
@@ -74,14 +97,15 @@ class NNDatabase:
         data = np.load(file_path, allow_pickle=True)
         files = data.files
         inputs = []
+        item = files[-1]
+        environment = data[item].item()
 
         item = files[0]
         input_array = data[item]
-        number_of_columns = input_array.shape[1]
         number_of_rows = input_array.shape[0]
-        input_size = self._input_sizes[0]
-        input_array = np.pad(input_array, pad_width=((0, 0), (0, input_size - number_of_columns)), mode='constant',
-                             constant_values=0)
+        number_of_levels = get_number_of_levels(environment)
+        max_lead_time = get_max_lead_time(environment)
+        input_array = self.get_state_features(input_array, self._max_number_of_levels, number_of_levels, max_lead_time)
 
         item = files[1]
         output = data[item]
@@ -93,8 +117,6 @@ class NNDatabase:
 
         inputs.append(input_array)
 
-        item = files[-1]
-        environment = data[item].item()
         for key, input_size in zip(sorted(environment.keys()), self._input_sizes[-13:]):
             input_array = environment[key]
             input_array = convert_input_to_array(input_array)

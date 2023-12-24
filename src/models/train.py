@@ -18,13 +18,14 @@ def get_optimal_number_of_epochs(loss_list):
 
 input_sizes = [170, 11, 11, 1, 1, 11, 1, 2, 11, 11, 1, 1, 11, 1]
 output_size = 11
+max_number_of_levels = 9
 path = "./data/train/"
 files = [path + file for file in os.listdir(path)]
 train_set_percentage = math.floor(len(files) * 0.9)
 
 random.shuffle(files)
-train_database = NNDatabase(input_sizes, output_size)
-validation_database = NNDatabase(input_sizes, output_size)
+train_database = NNDatabase(input_sizes, output_size, max_number_of_levels)
+validation_database = NNDatabase(input_sizes, output_size, max_number_of_levels)
 train_database.read_data(files[0:train_set_percentage])
 validation_database.read_data(files[train_set_percentage:])
 
