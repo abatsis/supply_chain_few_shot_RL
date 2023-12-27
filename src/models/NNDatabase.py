@@ -51,15 +51,16 @@ class NNDatabase:
     def get_state_features(self, input_array, max_number_of_levels, number_of_levels, max_lead_time):
         bin_size = max_number_of_levels - 1
         required_length = bin_size * (max_lead_time + 1)
-        result = np.zeros(max(required_length, self._input_sizes[0]))
+        number_of_rows = input_array.shape[0]
+        result = np.zeros((number_of_rows, max(required_length, self._input_sizes[0])))
 
-        for i, elem in enumerate(input_array):
+        for i, elem in enumerate(input_array.T):
             bin_number, index = divmod(i, number_of_levels - 1)
             if bin_number == 0:
-                result[index] = elem
+                result[:, index] = elem
             else:
                 bin_number = max_lead_time - bin_number + 1
-                result[bin_size * bin_number + index] = elem
+                result[:, bin_size * bin_number + index] = elem
         return result
 
     def read_data(self, files):
