@@ -54,16 +54,13 @@ def state_feature(i, m):
     return f'Order at level {index} at time t - {bin_number}'
 
 
-class FeatureNameGenerator:
+def get_features(input_sizes,  max_number_of_levels):
+    features = []
+    for i in range(input_sizes[0]):
+        features.append(state_feature(i, max_number_of_levels))
 
-    def __init__(self, input_sizes,  max_number_of_levels):
-        self._features = []
-        for i in range(input_sizes[0]):
-            self._features.append(state_feature(i, max_number_of_levels))
+    for key, size in zip(sortedKeys, input_sizes[1:]):
+        for i in range(size):
+            features.append(feature_name(key, i))
 
-        for key, size in zip(sortedKeys, input_sizes[1:]):
-            for i in range(size):
-                self._features.append(feature_name(key, i))
-
-    def __call__(self, i):
-        return self._features[i]
+    return features
