@@ -1,3 +1,4 @@
+import os
 import re
 import secrets
 import sys
@@ -30,6 +31,7 @@ meta_learner = MetaLearner(input_sizes, output_size)
 meta_learner.set_model(model)
 file_path = sys.argv[2]
 destination_path = sys.argv[3]
+os.makedirs(destination_path, exist_ok=True)
 lab.read_environment(file_path)
 
 rewards_nn, observations, actions = lab.evaluate_metalearner(meta_learner, 20, logging=True)

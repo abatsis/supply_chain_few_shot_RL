@@ -1,3 +1,4 @@
+import os
 import secrets
 import sys
 from pathlib import Path
@@ -59,6 +60,7 @@ env_data = np.mean(environments, axis=0)
 rewards, observations, actions = lab.evaluate_metalearner(meta_learner, number_of_offline_episodes,
                                                           env_data=scale(env_data, means, stds), logging=True)
 destination_path = sys.argv[3]
+os.makedirs(destination_path, exist_ok=True)
 file_name = Path(file_path).stem
 file = destination_path + "/" + file_name + ".npz"
 np.savez(file, online_rewards=online_rewards, generations=generations, environments=environments, rewards=rewards,

@@ -105,5 +105,6 @@ for i in pbar:
 obs, actions, rewards = evaluate_using_checkpoint(model, 20, env)
 
 data_dir = sys.argv[1]
+os.makedirs(data_dir, exist_ok=True)
 file = data_dir + "/" + secrets.token_hex(nbytes=32) + ".npz"
 np.savez(file, obs=obs, actions=actions, rewards=rewards, config=env_config)

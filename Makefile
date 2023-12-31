@@ -44,6 +44,6 @@ analysis_train_hidden_context:
 analysis_test_hidden_context:
 	python src/test/hidden_context_analysis.py test_hidden_context > ./reports/hidden_context_analysis_report_test.txt
 
-analysis_random_env:
-	python src/test/random_env_analysis.py
+analysis_random_env_test:
+	python src/test/random_env_analysis.py test
 

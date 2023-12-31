@@ -1,6 +1,7 @@
 import os
 import random
 import shutil
+import sys
 from pathlib import Path
 import seaborn as sns
 import pandas as pd
@@ -8,10 +9,12 @@ import numpy as np
 from matplotlib import pyplot as plt
 from load_cma_data import load_data_from_file
 
+data_type = sys.argv[1]
+
 
 def get_env_configuration(file):
     file_name = Path(file).stem
-    path = f'./data/test/{file_name}.npz'
+    path = f'./data/{data_type}/{file_name}.npz'
     data = np.load(path, allow_pickle=True)
     files = data.files
     item = files[-1]
@@ -19,14 +22,14 @@ def get_env_configuration(file):
 
 def make_dir(file):
     file_name = Path(file).stem
-    path = './reports/random_env_test/' + file_name
+    path = f'./reports/random_env_{data_type}/' + file_name
     if os.path.exists(path):
         shutil.rmtree(path)
-    os.mkdir(path)
+    os.makedirs(path)
     return path + '/'
 
 
-path = "./data/evaluation/test_hidden_context/"
+path = f"./data/evaluation/{data_type}_hidden_context/"
 files = [path + file for file in os.listdir(path) if not file.startswith('.')]
 file = random.choice(files)
 destination_path = make_dir(file)

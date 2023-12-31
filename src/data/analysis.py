@@ -95,18 +95,19 @@ def load_data(folder):
 
 sns.set()
 data_type = sys.argv[1]
+os.makedirs('reports/figures', exist_ok=True)
 index, size, output_size = load_data(data_type)
 data = {'index': index, 'size': size}
 
 data_frame = pd.DataFrame(data)
 sns.violinplot(data=data_frame, x='index', y="size")
-plt.savefig("./reports/figures/data_input_sizes.pdf", dpi=300)
+plt.savefig(f"./reports/figures/data_input_sizes_{data_type}.pdf", dpi=300)
 plt.clf()
 
 data = {'output_size': output_size}
 data_frame = pd.DataFrame(data)
 sns.violinplot(data=data_frame, y='output_size')
-plt.savefig("./reports/figures/data_output_sizes.pdf", dpi=300)
+plt.savefig(f"./reports/figures/data_output_sizes_{data_type}.pdf", dpi=300)
 plt.clf()
 
 stats= get_stats(index, size)

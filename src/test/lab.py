@@ -16,11 +16,9 @@ def get_normalisation_data(env_size):
     return mean[-env_size:], std[-env_size:]
 
 
-def save_explainability_data(observations, actions, env_config, rewards, dir, name):
-    if not os.path.exists(dir):
-        os.makedirs(dir)
-
-    file = dir + "/" + name + ".npz"
+def save_explainability_data(observations, actions, env_config, rewards, dir_path, name):
+    os.makedirs(dir_path, exist_ok=True)
+    file = dir_path + "/" + name + ".npz"
     np.savez(file, obs=observations, actions=actions, rewards=rewards, config=env_config)
 
 

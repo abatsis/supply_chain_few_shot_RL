@@ -36,6 +36,7 @@ def load_data(folder):
 
 
 data_type = sys.argv[1]
+os.makedirs('reports/figures', exist_ok=True)
 
 columns = ['Mean value', 'Standard', 'Min', 'Quartile 1', 'Quartile 2', 'Quartile 3', 'Max']
 rows = ['PPO', 'Meta-learner']
@@ -49,10 +50,10 @@ print(table_frame.to_latex())
 difference_frame = pd.DataFrame()
 difference_frame['Reward difference'] = data_frame['Metalearner'] - data_frame['PPO']
 sns.violinplot(data=difference_frame, y="Reward difference")
-plt.savefig("./reports/figures/reward_difference.pdf", dpi=300)
+plt.savefig(f"./reports/figures/reward_difference_{data_type}.pdf", dpi=300)
 plt.clf()
 
 models = ['PPO', 'Metalearner']
 data_frame = pd.melt(data_frame, value_vars=models, var_name='Model', value_name='reward', ignore_index=False)
 sns.violinplot(data=data_frame, y="reward", x="Model")
-plt.savefig("./reports/figures/ppo_vs_metalearner.pdf", dpi=300)
+plt.savefig(f"./reports/figures/ppo_vs_metalearner_{data_type}.pdf", dpi=300)

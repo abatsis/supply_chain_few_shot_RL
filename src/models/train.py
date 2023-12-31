@@ -75,6 +75,7 @@ print("MSE", MSE(val_outputs, val_outputs_hat))
 date_time = datetime.now()
 
 model_dir = f"./models"
+os.makedirs(model_dir, exist_ok=True)
 model_name = (
     sys.argv[1] if len(sys.argv) > 1 else date_time.strftime("%d-%m-%Y_%H:%M:%S")
 )
