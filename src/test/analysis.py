@@ -44,8 +44,9 @@ sns.set()
 
 data_frame = load_data(data_type)
 table_frame = pd.DataFrame(get_stats(data_frame), rows, columns)
-print(table_frame)
-print(table_frame.to_latex())
+with open(f'./reports/analysis_report_{data_type}.txt', 'w') as f:
+    print(table_frame, file=f)
+    print(table_frame.to_latex(), file=f)
 
 difference_frame = pd.DataFrame()
 difference_frame['Reward difference'] = data_frame['Metalearner'] - data_frame['PPO']

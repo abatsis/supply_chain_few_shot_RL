@@ -116,9 +116,10 @@ rows = [str(i) for i in range(len(stats))]
 
 data_frame = load_data(data_type)
 table_frame = pd.DataFrame(stats, rows, columns)
-print(table_frame)
-print(table_frame.to_latex())
+table_frame_out = pd.DataFrame([stats_of_array(output_size)], columns=columns)
 
-table_frame = pd.DataFrame([stats_of_array(output_size)], columns=columns)
-print(table_frame)
-print(table_frame.to_latex())
+with open(f'./reports/generated_data_report_{data_type}.txt', 'w') as f:
+    print(table_frame, file=f)
+    print(table_frame.to_latex(), file=f)
+    print(table_frame, file=f)
+    print(table_frame.to_latex(), file=f)

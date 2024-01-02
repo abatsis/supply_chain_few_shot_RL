@@ -26,8 +26,6 @@ meta_learner.set_model(model)
 def get_reward(env_data): return lab.evaluate_metalearner(meta_learner, 1, env_data)
 
 
-
-
 def scale(point, means, stds): return (stds * point) + means
 
 
@@ -37,7 +35,7 @@ lab.read_environment(file_path)
 # scaling
 means, stds = get_normalisation_data(lab.get_env_data_size())
 score = lambda x: get_reward(scale(x, means, stds))
-optimizer = cma.CMAEvolutionStrategy([0] * lab.get_env_data_size(), 1, inopts={'CMA_diagonal': False,})
+optimizer = cma.CMAEvolutionStrategy([0] * lab.get_env_data_size(), 1, inopts={'CMA_diagonal': False, })
 
 # CMA-ES Optimisation for env_data
 online_rewards = []
@@ -52,7 +50,7 @@ for i in range(number_of_generations):
         values.append(-reward)
         online_rewards.append(reward)
         generations.append(i + 1)
-    print(np.mean(values),i)
+    print(np.mean(values), i)
     optimizer.tell(solutions, values)
 
 env_data = np.mean(environments, axis=0)
@@ -66,4 +64,6 @@ file = destination_path + "/" + file_name + ".npz"
 np.savez(file, online_rewards=online_rewards, generations=generations, environments=environments, rewards=rewards,
          ppo_mean_reward=lab.get_mean_ppo_reward(), true_env=lab.true_env_to_vector())
 
-save_explainability_data(observations, actions, lab.env_config(), rewards, 'data/explainability_hidden', file_name)
+data_type = Path(destination_path).stem
+save_explainability_data(observations, actions, lab.env_config(), rewards, f'data/explainability/{data_type}',
+                         file_name)

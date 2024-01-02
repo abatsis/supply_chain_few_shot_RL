@@ -23,7 +23,10 @@ def normalise(array, means, stds):
 
 def get_metalearner_mean_reward(file):
     file_name = Path(file).stem + '.csv'
-    path = './data/evaluation/test/' + file_name
+    if 'skewed' in file:
+        path = './data/evaluation/test_skewed/' + file_name
+    else:
+        path = './data/evaluation/test/' + file_name
     data_frame = pd.read_csv(path)
     values = data_frame['Metalearner'].values
     return np.mean(values)

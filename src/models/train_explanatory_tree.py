@@ -13,15 +13,18 @@ max_number_of_levels = 9
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--hidden', action='store_true')
+parser.add_argument('--skewed', action='store_true')
 args = parser.parse_args()
 hidden_context = vars(args)['hidden']
+skewed = vars(args)['skewed']
+data_type = 'test_skewed' if skewed else 'test'
 
 
 def get_data_path():
     if hidden_context:
-        data_path = 'data/explainability_hidden/'
+        data_path = f'data/explainability/{data_type}_hidden_context/'
     else:
-        data_path = 'data/explainability/'
+        data_path = f'data/explainability/{data_type}/'
     return data_path
 
 
@@ -77,5 +80,5 @@ viz_model = dtreeviz.model(model=model,
                            target_name='action')
 
 plot = viz_model.view()
-file_path = 'treeviz.svg' if not hidden_context else 'treeviz_hidden.svg'
+file_path = f'treeviz_{data_type}.svg' if not hidden_context else f'treeviz_hidden_{data_type}.svg'
 plot.save(file_path)

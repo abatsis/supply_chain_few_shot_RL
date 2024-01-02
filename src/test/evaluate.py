@@ -40,5 +40,6 @@ data = {'RL': rewards_rl, 'Metalearner': rewards_nn}
 data_frame = pd.DataFrame(data)
 file_name = Path(file_path).stem
 file = f"{destination_path}/{file_name}.csv"
+data_type = Path(destination_path).stem
 data_frame.to_csv(file)
-save_explainability_data(observations, actions, lab.env_config(), rewards_nn, 'data/explainability', file_name)
+save_explainability_data(observations, actions, lab.env_config(), rewards_nn, f'data/explainability/{data_type}', file_name)

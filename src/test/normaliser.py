@@ -8,7 +8,12 @@ class Normaliser:
         if file_name is None:
             pass
         else:
-            type = 'test' if 'test' in file_name else 'train'
+            if 'skewed' in file_name:
+                type = 'test_skewed'
+            elif 'test' in file_name:
+                type = 'test'
+            else:
+                type = 'train'
             file_name = Path(file_name).stem
             path = f'./data/{type}/{file_name}.npz'
             data = np.load(path, allow_pickle=True)
