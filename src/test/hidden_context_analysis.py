@@ -30,7 +30,7 @@ def load_data(folder):
 
 
 data_type = sys.argv[1]
-os.makedirs('reports/figures', exist_ok=True)
+os.makedirs('reports/evaluation_hidden', exist_ok=True)
 online_rewards, generations, rewards, regret, regret_M, true_environment_distances = load_data(data_type)
 
 sns.set()
@@ -40,15 +40,15 @@ data_frame = pd.DataFrame(data)
 regret_data_frame = pd.DataFrame(regret_data)
 
 graph = sns.lineplot(x="generation", y="reward", estimator=np.mean, data=data_frame)
-plt.savefig(f"./reports/figures/online_rewards_{data_type}.pdf", dpi=300)
+plt.savefig(f"./reports/evaluation_hidden/online_rewards_{data_type}.pdf", dpi=300)
 plt.clf()
 
 graph = sns.lineplot(x='generation', y='regret', hue='baseline',
                      data=pd.melt(regret_data_frame, ['generation'], value_name='regret', var_name='baseline'))
-plt.savefig(f"./reports/figures/online_regret_{data_type}.pdf", dpi=300)
+plt.savefig(f"./reports/evaluation_hidden/online_regret_{data_type}.pdf", dpi=300)
 plt.clf()
 
 graph = sns.lineplot(x="generation", y="distance", estimator=np.mean, data=data_frame)
-plt.savefig(f"./reports/figures/env_distances_{data_type}.pdf", dpi=300)
+plt.savefig(f"./reports/evaluation_hidden/env_distances_{data_type}.pdf", dpi=300)
 
 # What to do with offline rewards??????

@@ -80,5 +80,7 @@ viz_model = dtreeviz.model(model=model,
                            target_name='action')
 
 plot = viz_model.view()
-file_path = f'treeviz_{data_type}.svg' if not hidden_context else f'treeviz_hidden_{data_type}.svg'
-plot.save(file_path)
+destination_path = 'reports/explainability/'
+os.makedirs(destination_path, exist_ok=True)
+file_name = f'treeviz_{data_type}.svg' if not hidden_context else f'treeviz_hidden_{data_type}.svg'
+plot.save(destination_path + file_name)
