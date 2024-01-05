@@ -114,7 +114,7 @@ class NNDatabase:
         output = np.pad(output, pad_width=((0, 0), (0, self._output_size - number_of_columns)), mode='constant',
                         constant_values=0)
 
-        input_array, output, number_of_rows = match_input_output(input_array, output, number_of_rows)
+        #input_array, output, number_of_rows = match_input_output(input_array, output, number_of_rows)
 
         inputs.append(input_array)
 

@@ -89,6 +89,7 @@ def evaluate_using_checkpoint(model, num_episodes, env):
         reward = 0.0
         done = False
         while not done:
+            obss.append(obs)
             action, _ = model.predict(
                 observation=obs,
                 deterministic=True,
@@ -97,7 +98,6 @@ def evaluate_using_checkpoint(model, num_episodes, env):
             # print(obs.shape,action.shape)
             obs, r, done, _ = env.step(action)
             # print([action])
-            obss.append(obs)
             actions.append(action)
             reward += r
         rewards.append(reward)

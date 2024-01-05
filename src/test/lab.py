@@ -97,13 +97,14 @@ class Lab:
             reward = 0.0
             done = False
             while not done:
+                if logging:
+                    observations.append(obs)
                 data_point = self.get_data_point(obs, env_data)
                 nn_output = model.predict(data_point)
                 action = self.get_action(nn_output)
                 obs, r, done, _ = env.step(action)
                 reward += r
                 if logging:
-                    observations.append(obs)
                     actions.append(action)
             rewards.append(reward)
 
