@@ -17,7 +17,7 @@ th.set_num_threads(1)
 parser = argparse.ArgumentParser()
 parser.add_argument('data_dir')
 parser.add_argument('--skewed', action='store_true')
-args = parser.parse_args()
+args, unknown = parser.parse_known_args()
 args = vars(args)
 
 def poison_rand():

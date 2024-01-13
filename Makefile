@@ -1,9 +1,9 @@
 
 train_data:
-	CUDA_VISIBLE_DEVICES="" parallel -j100 --bar "python src/data/generate.py ./data/train >/dev/null 2>/dev/null" ::: {1..30000}
+	CUDA_VISIBLE_DEVICES="" parallel -j100 --bar "python src/data/generate.py ./data/train" ::: {1..40000}
 
 test_data:
-	CUDA_VISIBLE_DEVICES="" parallel -j100 --bar "python src/data/generate.py ./data/test >/dev/null 2>/dev/null" ::: {1..100}
+	CUDA_VISIBLE_DEVICES="" parallel -j100 --bar "python src/data/generate.py ./data/test" ::: {1..100}
 
 test_data_skewed:
 	CUDA_VISIBLE_DEVICES="" parallel -j100 --bar "python src/data/generate.py ./data/test_skewed --skewed >/dev/null 2>/dev/null" ::: {1..100}
