@@ -50,7 +50,7 @@ with tf.device('/CPU:0'):
 history = meta_learner.fit(
     x=inputs,
     y=output,
-    epochs=20,
+    epochs=2,
     validation_data=(val_inputs, val_outputs),
     batch_size=1024,
 )

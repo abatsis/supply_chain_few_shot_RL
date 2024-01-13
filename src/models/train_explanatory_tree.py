@@ -63,13 +63,14 @@ train_input, train_output, val_input, val_output = get_training_data(train_datab
 
 random_state = 1234  # get reproducible trees
 results = []
-for max_depth in range(1, 5):
-    tree_regressor = DecisionTreeRegressor(max_depth=max_depth, random_state=random_state, criterion="absolute_error")
+for max_leaf_nodes in [10]:
+    tree_regressor = DecisionTreeRegressor(max_leaf_nodes=max_leaf_nodes, random_state=random_state)
+    print(train_input.shape, train_output.shape, type(train_input))
     tree_regressor.fit(train_input, train_output)
     score = tree_regressor.score(val_input, val_output)
-    result = Result(tree_regressor, score, max_depth)
+    result = Result(tree_regressor, score, max_leaf_nodes)
     results.append(result)
-    print(f'max_depth: {max_depth}, score: {score}')
+    print(f'max_depth: {max_leaf_nodes}, score: {score}')
 
 model = get_best_result(results).model
 features = get_features(input_sizes, max_number_of_levels)
