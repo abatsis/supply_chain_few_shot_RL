@@ -21,7 +21,7 @@ args, unknown = parser.parse_known_args()
 args = vars(args)
 
 def poison_rand():
-    return {'mu': np.random.uniform(10, 100)}
+    return {'mu': 70}
 
 
 def binomial_rand():
@@ -63,6 +63,7 @@ def create_random_env_config(distribution_choice, m):
 
 
 def create_random_env_config_skewed(distribution_choice, m):
+    distribution_choice = 1
     return dict(
         periods=np.random.randint(10, 100),
         I0=[np.random.randint(10, 100) for i in range(m - 1)],
