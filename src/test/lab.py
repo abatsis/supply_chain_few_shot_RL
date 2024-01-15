@@ -38,10 +38,8 @@ class Lab:
             input = np.array([input])
         elif isinstance(input, bool):
             input = np.array([float[input]])
-        elif isinstance(input, dict) and 'low' in input:
-            input = np.array([input['low'], input['high']])
         elif isinstance(input, dict):
-            input = np.array([input['mu'], 100])
+            input = np.array([10, 100])
         elif isinstance(input, float):
             input = np.array([input])
         return input
