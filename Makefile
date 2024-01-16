@@ -67,3 +67,15 @@ explain_skewed:
 explain_skewed_hidden:
 	python src/models/train_explanatory_tree.py --skewed --hidden
 
+evaluate_all:
+	make evaluate_test
+	make evaluate_test_skewed
+	make evaluate_test_hidden_context
+	make evaluate_test_skewed_hidden_context
+
+analysis_all:
+	make analysis_test
+	make analysis_test_skewed
+	make analysis_test_hidden_context
+	make analysis_test_skewed_hidden_context
+
