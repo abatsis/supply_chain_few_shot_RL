@@ -37,7 +37,9 @@ online_rewards, regret, regret_M, generations, rewards, true_environment_distanc
 
 sns.set()
 data = {'reward': online_rewards, 'generation': generations, 'distance': true_environment_distances}
-regret_data = {'generation': generations, 'PPO': regret, 'Metalearner': regret_M}
+regret_data = {'generation': generations, 'PPO': regret} if 'skewed' in data_type else {'generation': generations,
+                                                                                        'PPO': regret,
+                                                                                        'Metalearner': regret_M}
 data_frame = pd.DataFrame(data)
 regret_data_frame = pd.DataFrame(regret_data)
 
