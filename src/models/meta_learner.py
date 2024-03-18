@@ -40,14 +40,11 @@ class MetaLearner:
         self.normalisation_layer.adapt(x, batch_size = 16000)
         self.save_normalisation_data()
         print("finished adaptation")
-        #x = self.normalisation_layer(x)
         for model in self.ind_models:
             model.fit(x=x, y=y, epochs=epochs,
                            validation_data=validation_data,
                            batch_size=batch_size)
 
-        #history = self.model.fit(x=x, y=y, epochs=epochs, validation_data=validation_data, batch_size=batch_size)
-        #return history.history
 
     def save(self, file):
         self.model.save(file)

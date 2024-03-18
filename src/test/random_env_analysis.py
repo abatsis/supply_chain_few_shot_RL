@@ -9,10 +9,40 @@ import numpy as np
 from matplotlib import pyplot as plt
 from load_cma_data import load_data_from_file
 
-data_type = sys.argv[1]
+
+def main():
+    data_type = sys.argv[1]
+    path = f"./data/evaluation/{data_type}_hidden_context/"
+    files = [path + file for file in os.listdir(path) if not file.startswith('.')]
+    file = random.choice(files)
+    destination_path = make_dir(file, data_type)
+    online_rewards, regret, regret_M, generations, rewards, true_environment_distances = load_data_from_file(file)
+
+    sns.set()
+    data = {'reward': online_rewards, 'generation': generations, 'distance': true_environment_distances}
+    regret_data = {'generation': generations, 'PPO': regret} if 'skewed' in data_type else {'generation': generations,
+                                                                                            'PPO': regret,
+                                                                                            'Metalearner': regret_M}
+    data_frame = pd.DataFrame(data)
+    regret_data_frame = pd.DataFrame(regret_data)
+
+    graph = sns.lineplot(x="generation", y="reward", estimator=np.mean, data=data_frame)
+    plt.savefig(f'{destination_path}online_rewards.pdf', dpi=300)
+    plt.clf()
+
+    graph = sns.lineplot(x='generation', y='regret', hue='baseline',
+                         data=pd.melt(regret_data_frame, ['generation'], value_name='regret', var_name='baseline'))
+    plt.savefig(f'{destination_path}online_regret.pdf', dpi=300)
+    plt.clf()
+
+    graph = sns.lineplot(x="generation", y="distance", estimator=np.mean, data=data_frame)
+    plt.savefig(f'{destination_path}env_distances.pdf', dpi=300)
+
+    with open(destination_path + 'env', 'w') as f:
+        print(get_env_configuration(file, data_type), file=f)
 
 
-def get_env_configuration(file):
+def get_env_configuration(file, data_type):
     file_name = Path(file).stem
     path = f'./data/{data_type}/{file_name}.npz'
     data = np.load(path, allow_pickle=True)
@@ -20,7 +50,8 @@ def get_env_configuration(file):
     item = files[-1]
     return data[item].item()
 
-def make_dir(file):
+
+def make_dir(file, data_type):
     file_name = Path(file).stem
     path = f'./reports/random_env_{data_type}/' + file_name
     if os.path.exists(path):
@@ -29,31 +60,5 @@ def make_dir(file):
     return path + '/'
 
 
-path = f"./data/evaluation/{data_type}_hidden_context/"
-files = [path + file for file in os.listdir(path) if not file.startswith('.')]
-file = random.choice(files)
-destination_path = make_dir(file)
-online_rewards, regret, regret_M, generations, rewards, true_environment_distances = load_data_from_file(file)
-
-sns.set()
-data = {'reward': online_rewards, 'generation': generations, 'distance': true_environment_distances}
-regret_data = {'generation': generations, 'PPO': regret} if 'skewed' in data_type else {'generation': generations,
-                                                                                        'PPO': regret,
-                                                                                        'Metalearner': regret_M}
-data_frame = pd.DataFrame(data)
-regret_data_frame = pd.DataFrame(regret_data)
-
-graph = sns.lineplot(x="generation", y="reward", estimator=np.mean, data=data_frame)
-plt.savefig(f'{destination_path}online_rewards.pdf', dpi=300)
-plt.clf()
-
-graph = sns.lineplot(x='generation', y='regret', hue='baseline',
-                     data=pd.melt(regret_data_frame, ['generation'], value_name='regret', var_name='baseline'))
-plt.savefig(f'{destination_path}online_regret.pdf', dpi=300)
-plt.clf()
-
-graph = sns.lineplot(x="generation", y="distance", estimator=np.mean, data=data_frame)
-plt.savefig(f'{destination_path}env_distances.pdf', dpi=300)
-
-with open(destination_path + 'env', 'w') as f:
-    print(get_env_configuration(file), file=f)
+if __name__ == "__main__":
+    main()

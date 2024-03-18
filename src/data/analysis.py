@@ -7,6 +7,39 @@ import seaborn as sns
 import numpy as np
 
 
+def main():
+    data_type = sys.argv[1]
+    os.makedirs('reports/data_analysis', exist_ok=True)
+
+    sns.set()
+    index, size, output_size = load_data(data_type)
+    data = {'index': index, 'size': size}
+
+    data_frame = pd.DataFrame(data)
+    sns.violinplot(data=data_frame, x='index', y="size")
+    plt.savefig(f"./reports/data_analysis/data_input_sizes_{data_type}.pdf", dpi=300)
+    plt.clf()
+
+    data = {'output_size': output_size}
+    data_frame = pd.DataFrame(data)
+    sns.violinplot(data=data_frame, y='output_size')
+    plt.savefig(f"./reports/data_analysis/data_output_sizes_{data_type}.pdf", dpi=300)
+    plt.clf()
+
+    stats = get_stats(index, size)
+    columns = ['Mean value', 'Standard', 'Min', 'Quantile 0.025', 'Quantile 0.975', 'Max']
+    rows = [str(i) for i in range(len(stats))]
+
+    table_frame = pd.DataFrame(stats, rows, columns)
+    table_frame_out = pd.DataFrame([stats_of_array(output_size)], columns=columns)
+
+    with open(f'./reports/data_analysis/generated_data_report_{data_type}.txt', 'w') as f:
+        print(table_frame, file=f)
+        print(table_frame.to_latex(), file=f)
+        print(table_frame_out, file=f)
+        print(table_frame_out.to_latex(), file=f)
+
+
 def stats_of_array(array):
     stats = [np.mean(array), np.std(array), np.min(array)]
     stats.extend(np.quantile(array, [0.025, 0.975]))
@@ -93,33 +126,5 @@ def load_data(folder):
     return index, size, output_size
 
 
-sns.set()
-data_type = sys.argv[1]
-os.makedirs('reports/data_analysis', exist_ok=True)
-index, size, output_size = load_data(data_type)
-data = {'index': index, 'size': size}
-
-data_frame = pd.DataFrame(data)
-sns.violinplot(data=data_frame, x='index', y="size")
-plt.savefig(f"./reports/data_analysis/data_input_sizes_{data_type}.pdf", dpi=300)
-plt.clf()
-
-data = {'output_size': output_size}
-data_frame = pd.DataFrame(data)
-sns.violinplot(data=data_frame, y='output_size')
-plt.savefig(f"./reports/data_analysis/data_output_sizes_{data_type}.pdf", dpi=300)
-plt.clf()
-
-stats= get_stats(index, size)
-columns = ['Mean value', 'Standard', 'Min', 'Quantile 0.025', 'Quantile 0.975', 'Max']
-rows = [str(i) for i in range(len(stats))]
-
-data_frame = load_data(data_type)
-table_frame = pd.DataFrame(stats, rows, columns)
-table_frame_out = pd.DataFrame([stats_of_array(output_size)], columns=columns)
-
-with open(f'./reports/data_analysis/generated_data_report_{data_type}.txt', 'w') as f:
-    print(table_frame, file=f)
-    print(table_frame.to_latex(), file=f)
-    print(table_frame, file=f)
-    print(table_frame.to_latex(), file=f)
+if __name__ == "__main__":
+    main()
