@@ -23,14 +23,15 @@ def main():
     lab = Lab(input_sizes, output_size, max_number_of_levels)
     lab.read_environment(file_path)
 
-    def get_reward(env_data):
-        return lab.evaluate_metalearner(meta_learner, 1, env_data)
+    def get_reward(context_input):
+        return lab.evaluate_metalearner(meta_learner, 1, context_input)
 
-    # scaling
+    # Set up objective function
     means, stds = get_normalisation_data(lab.get_env_data_size())
-    score = lambda x: get_reward(scale(x, means, stds))
+    scaled = lambda point: (stds * point) + means
+    f_objective = lambda x: -get_reward(scaled(x))
 
-    # CMA-ES Optimisation for env_data
+    # CMA-ES optimisation for context_input
     optimizer = cma.CMAEvolutionStrategy([0] * lab.get_env_data_size(), 1, inopts={'CMA_diagonal': False, })
     online_rewards = []
     generations = []
@@ -40,17 +41,17 @@ def main():
         environments.extend(solutions)
         values = []
         for solution in solutions:
-            reward = score(solution)
-            values.append(-reward)
-            online_rewards.append(reward)
+            value = f_objective(solution)
+            values.append(value)
+            online_rewards.append(-value)
             generations.append(i + 1)
         print(np.mean(values), i)
         optimizer.tell(solutions, values)
 
-    # off line evaluation after optimisation of context input
-    env_data = np.mean(environments, axis=0)
+    # off-line evaluation after optimisation of context input
+    context_input = scaled(np.mean(environments, axis=0))
     rewards, observations, actions = lab.evaluate_metalearner(meta_learner, number_of_offline_episodes,
-                                                              env_data=scale(env_data, means, stds), logging=True)
+                                                              env_data=context_input, logging=True)
     file_name = Path(file_path).stem
     destination_path = sys.argv[3]
     data_type = Path(destination_path).stem
@@ -58,9 +59,6 @@ def main():
     save_results(destination_path, file_name, online_rewards, generations, environments, rewards, lab)
     save_explainability_data(observations, actions, lab.env_config(), rewards, f'data/explainability/{data_type}',
                              file_name)
-
-
-def scale(point, means, stds): return (stds * point) + means
 
 
 def save_results(destination_path, file_name, online_rewards, generations, environments, rewards, lab):

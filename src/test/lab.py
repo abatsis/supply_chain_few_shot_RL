@@ -32,6 +32,7 @@ class Lab:
         self._env_data_size = None
         self._ppo_mean_reward = None
         self._max_number_of_levels = max_number_of_levels
+        self._env_data_size = sum(input_sizes[-13:])
 
     def convert_input_to_array(self, input):
         if isinstance(input, int):
@@ -121,7 +122,6 @@ class Lab:
         self._env_config = data[item].item()
         self._env_data = self.env_to_array(self._env_config, self._input_sizes)
         self._number_of_units = len(self._env_config['I0'])
-        self._env_data_size = sum([len(element) for element in self._env_data])
 
         item = files[2]
         ppo_rewards = data[item]
